@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Installs HAProxy and balances traffic between web-01 and web-02 with roundrobin
+WEB01_IP="16.60.112.164"
+WEB02_IP="18.130.56.162"
+
+sudo apt-get -y update
+sudo apt-get -y install haproxy
+echo "ENABLED=1" | sudo tee -a /etc/default/haproxy > /dev/null
+if ! grep -q "backend web_servers" /etc/haproxy/haproxy.cfg; then
+    sudo tee -a /etc/haproxy/haproxy.cfg > /dev/null <<CONFIG
+
+frontend http_front
+    bind *:80
+    mode http
+    default_backend web_servers
+
+backend web_servers
+    mode http
+    balance roundrobin
+    server 7284-web-01 ${WEB01_IP}:80 check
+    server 7284-web-02 ${WEB02_IP}:80 check
+CONFIG
+fi
+sudo service haproxy restart
