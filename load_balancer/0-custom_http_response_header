@@ -7,6 +7,6 @@ echo "Holberton School for the win!" | sudo tee /var/www/html/index.nginx-debian
 echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html > /dev/null
 if ! grep -q "X-Served-By" /etc/nginx/sites-available/default; then
     # shellcheck disable=SC2016
-    sudo sed -i 's|server_name _;|server_name _;\n\n    add_header X-Served-By $hostname;\n    error_page 404 /404.html;|' /etc/nginx/sites-available/default
+    sudo sed -i 's|server_name _;|server_name _;\n\n    add_header X-Served-By $hostname always;\n    error_page 404 /404.html;|' /etc/nginx/sites-available/default
 fi
 sudo service nginx restart
